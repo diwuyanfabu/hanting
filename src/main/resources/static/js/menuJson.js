@@ -1,0 +1,136 @@
+/*leftNav_id不可重复、以下属性名不可更改，否则页面要进行相应调整*/
+var leftNav = [{
+	"text": "服务管理",
+	"leftNav_id": "1",
+	"name": "服务类别设置",
+	"href": "/html/gwx/fwlbsz.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "2",
+	"name": "服务审核设置",
+	"href": "/html/gwx/fwshgl.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "3",
+	"name": "服务级别设置",
+	"href": "/html/gwx/fwjbsz.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "4",
+	"name": "服务类型预约",
+	"href": "/html/gwx/fwlxyy.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "5",
+	"name": "服务审核设置",
+	"href": "html/messageList.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "6",
+	"name": "退款管理设置",
+	"href": "html/activity.html"
+}, {
+	"text": "服务管理",
+	"leftNav_id": "7",
+	"name": "服务投诉设置",
+	"href": "html/ItemsSys/index.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "8",
+	"name": "会员审核",
+	"href": "html/ItemsSys/projectteam.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "9",
+	"name": "商家管理",
+	"href": "html/ItemsSys/projectcheck.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "10",
+	"name": "商家入驻",
+	"href": "html/jobSys/jianchazuoye.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "11",
+	"name": "鉴定审核",
+	"href": "html/jobSys/fabuzuoye.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "12",
+	"name": "商家推荐",
+	"href": "html/classSys/ClassViewAll.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "13",
+	"name": "评价管理",
+	"href": "html/classSys/Auditing.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "14",
+	"name": "金币记录",
+	"href": "html/classSys/StartClass.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "15",
+	"name": "积分记录",
+	"href": "html/jobSys/examination/newExam.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "16",
+	"name": "充值记录",
+	"href": "html/kaoqing.html"
+}, {
+	"text": "会员管理",
+	"leftNav_id": "17",
+	"name": "提现记录",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "18",
+	"name": "收藏排行",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "19",
+	"name": "服务收藏",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "20",
+	"name": "BBS收藏",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "21",
+	"name": "店铺收藏",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "22",
+	"name": "留言反馈",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "23",
+	"name": "保障金详情",
+	"href": "html/sql.html"
+
+}, {
+	"text": "会员管理",
+	"leftNav_id": "24",
+	"name": "会员站内信",
+	"href": "html/sql.html"
+
+}, {
+	"text": "广告管理",
+	"leftNav_id": "25",
+	"name": "广告排版设置",
+	"href": "html/sql.html"
+
+}]

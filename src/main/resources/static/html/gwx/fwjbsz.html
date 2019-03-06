@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+<div id="vmCnt">
+		<header style="padding: 10px 5px;" class="hd">
+			<h2>
+				服务级别管理 <input type="button" style="float: right; margin-left: 20px;"
+					class="layui-btn" value="更新数据" /> <input type="button"
+					style="float: right;" class="layui-btn" value="增加级别" />
+			</h2>
+			<br>
+			<h5>
+				服务类型: <select class="layui-select-disabled" id="serTypesel">
+					<option value="-1">所有</option>
+					<option v-for="temp in serType" v-bind:value="temp.stid">
+						{{temp.stName}}</option>
+				</select>
+
+			</h5>
+
+		</header>
+		<section>
+			<table class="layui-table" lay-skin="line" id="table1">
+				<thead>
+					<tr>
+						<td>ID</td>
+						<td>级别名称</td>
+						<td>分类</td>
+						<td>最小值</td>
+						<td>最大值</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="(temp,index) in serlevel">
+						<tr>
+							<td v-text="temp.serlevelID"></td>
+							<td v-text="temp.serlevelName" style="font-weight: 600">会员名称</td>
+							<td>
+								<template v-for="its in serType">
+									<span v-if="temp.stid==its.stid" v-text="its.stName"></span>
+								</template>
+							</td>
+							<td><input type="text" v-model="temp.serviceIntegralMin" name="serviceIntegralMin"/></td>
+							<td><input type="text" v-model="temp.serviceIntegralMax" name="serviceIntegralMax"/></td>
+							<td>
+								<a href="javascript:void(0)" @click="removeInfo(temp.serlevelID)">删除</a>
+							</td>
+						</tr>
+					</template>
+				</tbody>
+
+			</table>
+		</section>
+	</div>
+</body>
+<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+
+	var vm = new Vue({
+		el : "#vmCnt",
+		data : {
+			serType : [],
+			serlevel : []
+		},
+		methods : {
+			initInfo : function() {
+				$.ajax({
+					url : "/gwx/c/service/stclassSel",
+					type : "GET",
+					data : {
+						"stclass" : 1
+					},
+					async : false,
+					dataType : "JSON",
+					success : function(jsondata) {
+						vm.serType = jsondata;
+					},
+				});
+			},
+			getSortFun : function (order, sortBy) {
+			    var ordAlpah = (order == 'asc') ? '<' : '>';
+			    var sortFun = new Function('a', 'b', 'return a.' + sortBy + ordAlpah + 'b.' + sortBy + '?1:-1');
+			    return sortFun;
+			},
+			showSerlevel : function(stid){
+				$.ajax({
+					url : "/gwx/c/serlvl/serlvlInfo",
+					type : "GET",
+					data : {
+						"stid" : stid
+					},
+					async : false,
+					dataType : "JSON",
+					success : function(jsondata) {
+						var jsonArr1=jsondata.sort(vm.getSortFun('desc', 'stid'));
+						//var jsonArr2=jsonArr1.sort(vm.getSortFun('desc', 'serviceIntegralMax'));
+						vm.serlevel = jsonArr1;
+					},
+				});
+			},
+			
+			removeInfo : function(serlevelID) {
+				layui.use('layer', function() {
+					layer.confirm('是否确认删除信息?', {
+						btn : [ '确定', '取消' ],
+						time : 200000, //20s后自动关闭
+					}, function(index) {
+						$.post("/gwx/c/serlvl/delserlvl", {
+							"serlevelID" : serlevelID
+						}, function(json) {
+							if (json.code == "200") {
+								layer.msg("删除成功!", {
+									icon : 1,
+									time : 2000
+								});
+								location.replace(location.href);
+							} else {
+								alert(json.msg);
+							}
+
+						}, "json");
+
+					}, function() {
+						layer.closeAll('dialog');
+					});
+				});
+			},
+		},
+	});
+	
+	vm.initInfo();
+	vm.showSerlevel(-1);
+	
+	$("#serTypesel").change(function(){
+		var stids = $("#serTypesel").val();
+		vm.showSerlevel(stids);
+	});
+	
+	function showsArr1(){  //serviceIntegralMin
+		var serviceIntegralMin=new Array();
+		for(var i=0;i<$("[name=serviceIntegralMin]").length;i++){
+			serviceIntegralMin.push($("[name=serviceIntegralMin]").eq(i).val());
+		}
+		return serviceIntegralMin;
+	}
+	
+	function showsArr2(){  //serviceIntegralMax
+		var serviceIntegralMax=new Array();
+		for(var i=0;i<$("[name=serviceIntegralMax]").length;i++){
+			serviceIntegralMax.push($("[name=serviceIntegralMax]").eq(i).val());
+		} 
+		return serviceIntegralMax;
+	}
+	var arry1=new Array();
+	var arry2=new Array();
+	window.onload=function loads(){
+		arry1=showsArr1();
+		arry2=showsArr2();
+	}
+	
+	$("[value='更新数据']").click(function(){
+		
+		var serviceIntegralMin=showsArr1();
+		var serviceIntegralMax=showsArr2();
+		
+		
+		for(var j=0;j<serviceIntegralMin.length;j++){
+			if(serviceIntegralMin[j]!=arry1[j]||serviceIntegralMax[j]!=arry2[j]){
+				var serlevelID = $("[name=serviceIntegralMin]").eq(j).parent().prev().prev().prev().text();
+				var smin = serviceIntegralMin[j];
+				var smax = serviceIntegralMax[j];
+				$.post("/gwx/c/serlvl/updserlvl",{"serlevelID":serlevelID,"serviceIntegralMin":smin,"serviceIntegralMax":smax},function(json){
+					if(json.code=="200"){
+						location.replace(location.href);
+					}else if(json.code=="500"){
+						alert(json.msg);
+					}
+					
+				},"json");
+			}
+		}
+	});
+	
+	$("[value='增加级别']").click(function(){
+		
+		layui.use('layer', function(){
+			  var layer = layui.layer;
+			  layer.open({
+					type: 2,
+					title: '新增级别',
+					area: ['1147px', '590px'],
+					content: ['addServicelevel.html','no'],
+					//anim: 2,
+					//btnAlign: 'c',
+					maxmin: true
+				});
+		}); 
+		
+	});
+</script>
+</html>

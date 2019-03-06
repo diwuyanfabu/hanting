@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.backstage.dao.gwx.ServiceTypeDao">
+	<select id="queryServiceType"
+		resultType="com.accp.backstage.dao.gwx.vo.ServiceType">
+		select * from `servicetype` where
+		<if test="stclass==0">
+			1=1;
+		</if>
+		<if test="stclass==1">
+			`stclass`=1;
+		</if>
+	</select>
+
+	<select id="queryServiceTypeBystPid"
+		resultType="com.accp.backstage.dao.gwx.vo.ServiceType">
+		select * from `servicetype` where `stPid`=#{stPid};
+	</select>
+
+	<insert id="insertServiceType">
+		insert into
+		`servicetype`(`stPid`,`stName`,`stclass`,`sort`,`display`,`operationTime`,`confirmTime`,`violatedNumber`,`proportion`,`toExamine`,`advertisement`)
+		values
+		(#{stInfo.stPid},#{stInfo.stName},#{stInfo.stclass},#{stInfo.sort},#{stInfo.display},#{stInfo.operationTime},#{stInfo.confirmTime},#{stInfo.violatedNumber},#{stInfo.proportion},#{stInfo.toExamine},#{stInfo.advertisement});
+	</insert>
+
+	<delete id="deleteServiceType">
+		delete from `servicetype` where `stid`=#{stid};
+	</delete>
+
+	<update id="updateServiceType">
+		update `servicetype` set
+		`sort`=#{sort},`display`=#{display} where `stid`=#{stid};
+	</update>
+	
+	<update id="updateServiceTypeSetting">
+		update `servicetype` set
+		`operationTime` = #{operationTime},`confirmTime`= #{confirmTime},`violatedNumber`= #{violatedNumber} where `stid`=#{stid}
+	</update>
+</mapper>

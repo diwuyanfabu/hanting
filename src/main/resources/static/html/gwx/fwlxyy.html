@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+	<div id="test1">
+		<header style="padding: 10px 5px;" class="hd">
+			<h2>
+				服务类型预约 
+			</h2>
+			<br>
+			<h5>
+				会员名/商家名/订单号:<input type="text"/>
+				时间: <input type="date"/>—— ——<input type="date"/>
+				 服务类别:
+				<select lay-verify="required" id="serTypesel">
+					<option value="不限">所有</option>
+					<option v-for="temp in sname" v-bind:value="temp.stName">
+						{{temp.stName}}
+					</option>
+				</select>
+				状态:
+				<select name="status" lay-verify="required" id="status">
+					<option value="0">不限</option>
+					<option value="1">待付款</option>
+					<option value="2">待接单</option>
+					<option value="3">待提供服务</option>
+					<option value="4">已提供服务</option>
+					<option value="5">服务完成</option>
+					<option value="6">服务取消</option>
+					<option value="7">未接单</option>
+					<option value="8">已退款</option>
+				</select>
+				
+				<input type="button" value="搜索" class="layui-btn"/>
+			</h5>
+		</header>
+		
+		<section>
+			<table class="layui-table" lay-size="sm" id="table1">
+				
+				<thead>
+					<tr>
+						<td>序号</td>
+						<td>单号</td>
+						<td>会员</td>
+						<td>商家</td>
+						<td>服务类别</td>
+						<td>服务名称</td>
+						<td>积分</td>
+						<td>下单时间</td>
+						<td>订单状态</td>
+						<td>支付状态</td>
+						<td>支付时间</td>
+						<td>备注</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="(temp,index) in orders">
+						<tr>
+							<td v-text="index+1"></td>
+							<td v-text="temp.orderid"></td>
+							<td v-text="temp.username"></td>
+							<td v-text="temp.shopname"></td>
+							<td v-text="temp.stname"></td>
+							<td v-text="temp.servicetitle"></td>
+							<td v-text="temp.integral"></td>
+							<td v-text="temp.ordertime"></td>
+							<td>
+								<span v-if="temp.orderStatus==1">待付款</span>
+								<span v-if="temp.orderStatus==2">待接单</span>
+								<span v-if="temp.orderStatus==3">待提供服务</span>
+								<span v-if="temp.orderStatus==4">已提供服务</span>
+								<span v-if="temp.orderStatus==5">服务完成</span>
+								<span v-if="temp.orderStatus==6">服务取消</span>
+								<span v-if="temp.orderStatus==7">未接单</span>
+								<span v-if="temp.orderStatus==8">已退款</span>
+							</td>
+							<td>
+								<span v-if="temp.orderStatus==1">未支付</span>
+								<span v-if="temp.orderStatus==2">已支付</span>
+								<span v-if="temp.orderStatus==3">已支付</span>
+								<span v-if="temp.orderStatus==4">已支付</span>
+								<span v-if="temp.orderStatus==5">已支付</span>
+								<span v-if="temp.orderStatus==6">未支付</span>
+								<span v-if="temp.orderStatus==7">已支付</span>
+								<span v-if="temp.orderStatus==8">已支付</span>
+							</td>
+							<td v-text="temp.paymenttime"></td>
+							<td v-text="temp.remarks"></td>
+							<td><a href="javascript:void(0)">查看</a></td>
+							
+						</tr>
+					
+					</template>
+				</tbody>
+
+			</table>
+		</section>
+	
+	</div>
+
+</body>
+<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/layui/lay/modules/laypage.js"></script>
+<script type="text/javascript">
+
+	var vm = new Vue({
+		el: "#test1",
+		data: {
+			orders : null,
+			sname : []
+		},
+	});
+
+	pagination(1, 10,null,null,null,null,null);
+	function pagination(pageIndex, pageSize,san,datestart,dateend,stname,status) {
+	    //查询条件
+	    var param = {
+	    	"PageNum": pageIndex,
+	        "PageSize": pageSize,
+	        "san":san,
+	        "datestart":datestart,
+	        "dateend":dateend,
+	        "stname":stname,
+	        "status":status
+	    };
+	    $.ajax({
+	        type: 'GET',
+	        url: '/gwx/c/serOrders/queryallorder',
+	        dataType: 'json',
+	        data: param,
+	        async: false,
+	        success: function (jsondata) {
+	        	vm.orders = jsondata.list;
+        		vm.$el.textContent === jsondata.list;
+        		Vue.nextTick(function () {
+        		  vm.$el.textContent === jsondata.list;
+        		});
+	        },
+	    });
+	};
+	
+	$.ajax({
+		url:"/gwx/c/serOrders/getstname",
+		type:"GET",
+		async: false,
+		success:function(jsonData){
+			vm.sname=jsonData;
+		},
+	});
+	
+	$("[value='搜索']").click(function(){
+		var san=$("[type='text']").eq(0).val();
+		var datestart=$("[type='date']").eq(0).val();
+		var dateend=$("[type='date']").eq(1).val();
+		var stname=$("#serTypesel").val(); 
+		var status=$("#status").val();
+		alert(datestart+"*****"+dateend);
+		pagination(1, 10,san,datestart,dateend,stname,status);
+	});
+</script>
+</html>

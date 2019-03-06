@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.accp.backstage.dao.gwx.ServiceOrdersDao">
+
+	<select id="queryOrders" resultType="com.accp.backstage.dao.gwx.vo.ServiceOrders">
+		select * from(
+		SELECT a.`orderID`,a.`userID`,b.`userName`,
+		b.`shopName`,
+		d.`stName`,
+		`serviceTitle`,`integral`,`orderTime`,`paymentTime`,`receiptTime`,`provideServicesTime`,
+		`completeTime`,`remarks`,`orderStatus`,`totalPrice`,`serviceCoverImg`
+		FROM orders a
+		JOIN `user` b ON a.`userID`=b.`userID`
+		JOIN `services` c
+		ON a.`serviceID`=c.`serviceID`
+		JOIN `servicetype` d ON
+		c.`stid`=d.`stid`
+		WHERE a.orderStatus=1 OR a.orderStatus=2 OR
+		a.orderStatus=3 OR a.orderStatus=4 OR a.orderStatus=5 OR
+		a.orderStatus=6
+		OR a.orderStatus=12 ) g
+		<where>
+			<if test="san != null or san != ''">
+				AND g.userName like '%${san}%' OR g.shopName like
+				'%${san}%' OR
+				g.orderID like '%${san}%'
+			</if>
+			<if test="stname!='不限'">
+				AND g.stName=#{stname}
+			</if>
+			<if test="status != null or status != 0">
+				AND orderStatus=#{status}
+			</if>
+			<if test="datestart!=null or datestart != ''">
+				AND orderTime>=#{datestart}
+			</if>
+			<if test="dateend!=null or dateend != ''">
+				AND orderTime&lt;=#{dateend}
+			</if>
+		</where>
+	</select>
+	
+	<select id="querystname" resultType="com.accp.backstage.dao.gwx.vo.ServiceType">
+		SELECT `stName` FROM
+		`servicetype` WHERE `stPid`=0
+	</select>
+
+</mapper>

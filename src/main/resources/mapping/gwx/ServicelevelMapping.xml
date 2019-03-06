@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.backstage.dao.gwx.ServicelevelDao">
+	<select id="queryServicelevel" resultType="com.accp.backstage.pojo.Servicelevel">
+		select * from `servicelevel` where
+		<if test="stid>0">
+			`stid`=#{stid};
+		</if>
+		<if test="stid==-1">
+			1=1;
+		</if>
+	</select>
+	
+	<insert id="insertServicelevel">
+		insert into `servicelevel`(`serlevelName`,`stid`,`serviceIntegralMin`,`serviceIntegralMax`)
+		values (#{lvl.serlevelName},#{lvl.stid},#{lvl.serviceIntegralMin},#{lvl.serviceIntegralMax});
+	</insert>
+	
+	<delete id="delServicelevel">
+		delete from `servicelevel` where `serlevelID` = #{serlevelID};
+	</delete>
+	
+	<update id="updateServicelevel">
+		update `servicelevel` set `serviceIntegralMin` = #{serviceIntegralMin},`serviceIntegralMax` = #{serviceIntegralMax}
+		where `serlevelID` = #{serlevelID};
+	</update>
+
+</mapper>

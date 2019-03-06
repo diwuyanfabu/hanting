@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+<body>
+	<form id="vmAddCnt">
+		<table class="layui-table">
+			<tr>
+				<td><span style="float: right;">服务类型:</span></td>
+				<td><select class="layui-select-disabled" id="AddPsel">
+					<template v-for="(temp,index) in serType">
+						<option v-bind:value="temp.stid">
+							{{temp.stName}}
+						</option>
+					</template>
+				</select></td>
+			</tr>
+
+			<tr>
+				<td><span style="float: right;">级别名称:</span></td>
+				<td><input type="text" class="layui-input" id="serlevelName" /></td>
+			</tr>
+			<tr>
+				<td><span style="float: right;">交易金额:</span></td>
+				<td>
+					<input type="text" class="layui-input" id="serviceIntegralMin" style="width: 30%;float: left;"/>
+					<span style="float: left;">—— ——</span>
+					<input type="text" class="layui-input" id="serviceIntegralMax" style="width: 30%;float: left;"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td></td>
+				<td><input type="button" class="layui-btn" value="保存" /> <input
+					type="button" class="layui-btn" value="返回" /></td>
+			</tr>
+		</table>
+
+	</form>
+</body>
+	<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/layui/layui.js"></script>
+	<script type="text/javascript">
+	var vm = new Vue({
+		el : "#vmAddCnt",
+		data : {
+			serType : [],
+		},
+		methods : {
+			initInfo : function() {
+				$.ajax({
+					url : "/gwx/c/service/stclassSel",
+					type : "GET",
+					data : {
+						"stclass" : 1
+					},
+					async : false,
+					dataType : "JSON",
+					success : function(jsondata) {
+						vm.serType = jsondata;
+					},
+				});
+			},
+		},
+	});
+	
+	vm.initInfo();
+	
+	$("[value='保存']").click(function(){
+		var stid=$("#AddPsel").val();
+		var serlevelName=$("#serlevelName").val();
+		var serviceIntegralMin=$("#serviceIntegralMin").val();
+		var serviceIntegralMax=$("#serviceIntegralMax").val();
+		if(serlevelName==""||serviceIntegralMin==""||serviceIntegralMax==""){
+			layui.use('layer', function(){
+				  var layer = layui.layer;
+				  layer.msg('请完善信息!');
+			});
+			return;
+		}
+		
+		var jsonObj={};
+		jsonObj["stid"]=stid;
+		jsonObj["serlevelName"]=serlevelName;
+		jsonObj["serviceIntegralMin"]=serviceIntegralMin;
+		jsonObj["serviceIntegralMax"]=serviceIntegralMax;
+		var jsonStr=JSON.stringify(jsonObj);//序列化成json字符串
+		
+		$.post("/gwx/c/serlvl/addserlvl",{"lvl":jsonStr},function(json){
+			if(json.code=="200"){
+				location.replace(location.href);
+			}else if(json.code=="500"){
+				alert(json.msg);
+			}
+			
+		},"json");
+	});
+	</script>
+</html>

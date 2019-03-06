@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/layui/css/layui.css">
+<style type="text/css">
+	.inp{
+		width: 30%;
+	}
+</style>
+</head>
+<body>
+<div id="vmCnt">
+		<header style="padding: 10px 5px;" class="hd">
+			<h2>服务审核管理 
+				<input type="button" style="float: right; margin-left: 20px;" class="layui-btn" value="更新数据" />
+			</h2>
+			<br>
+		</header>
+		<section>
+			<table class="layui-table" style="text-align: center;" lay-skin="line" lay-size="sm" id="table1">
+				<thead>
+					<tr>
+						<td>ID</td>
+						<td>栏目名称</td>
+						<td>未操作时间</td>
+						<td>自动确认时间</td>
+						<td>服务违约天数</td>
+						<td>违约金比例</td>
+						<td>是否审核</td>
+						<td>广告</td>
+						<!-- <td>操作</td> -->
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="(temp,index) in serType">
+						<tr>
+							<td v-text="temp.stid"></td>
+							<td v-text="temp.stName" style="font-weight: 600">会员名称</td>
+							<td>
+								<input class="inp" type="text" v-model="temp.operationTime" name="operationTime"/>天
+							</td>
+							<td>
+								<input class="inp" type="text" v-model="temp.confirmTime" name="confirmTime"/>小时
+							</td>
+							<td>
+								<input class="inp" type="text" v-model="temp.violatedNumber" name="violatedNumber"/>天
+							</td>
+							<td>
+								<input class="inp" type="text" v-model="temp.proportion" name="proportion"/>%
+							</td>
+							<td>
+								<input :name="'exa'+index" v-model="temp.toExamine" type="radio" value="true"/>需要 
+								<input :name="'exa'+index" v-model="temp.toExamine" type="radio" value="false"/>不需要
+							</td>
+							<td>
+								<img :src="temp.advertisement">
+							</td>
+							<!-- <td>
+								<a href="javascript:void(0)" @click="removeInfo(te.stid)">修改</a>
+							</td> -->
+						</tr>
+					</template>
+				</tbody>
+
+			</table>
+		</section>
+	</div>
+
+</body>
+<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+
+<script type="text/javascript">
+	var vmS = new Vue({
+		el: "#vmCnt",
+		data: {
+			serType: []
+		},
+		methods: {
+			initInfo: function() {
+				$.ajax({
+					url : "/gwx/c/service/stclassSel",
+					type : "GET",
+					data : {
+						"stclass" : 1
+					},
+					async: false,
+					dataType : "JSON",
+					success : function(jsondata) {
+						vmS.serType=jsondata;
+					},
+				});
+			},
+		},
+		
+	});
+
+	vmS.initInfo();
+	
+	function showsArr1(){  //operationTime
+		var operationTime=new Array();
+		for(var i=0;i<$("[name=operationTime]").length;i++){
+			operationTime.push($("[name=operationTime]").eq(i).val());
+		}
+		return operationTime;
+	}
+	
+	function showsArr2(){  //confirmTime
+		var confirmTime=new Array();
+		for(var i=0;i<$("[name=confirmTime]").length;i++){
+			confirmTime.push($("[name=confirmTime]").eq(i).val());
+		} 
+		return confirmTime;
+	}
+	
+	function showsArr3(){  //violatedNumber
+		var violatedNumber=new Array();
+		for(var i=0;i<$("[name=violatedNumber]").length;i++){
+			violatedNumber.push($("[name=violatedNumber]").eq(i).val());
+		} 
+		return violatedNumber;
+	}
+	
+	function showsArr4(){  //proportion
+		var proportion=new Array();
+		for(var i=0;i<$("[name=proportion]").length;i++){
+			proportion.push($("[name=proportion]").eq(i).val());
+		} 
+		return proportion;
+	}
+	function showsArr5(){  //toExamine
+		var toExamine=new Array();
+		for(var i=0;i<$("input:radio:checked").length;i++){
+			toExamine.push($("input:radio:checked").eq(i).val());
+		} 
+		return toExamine;
+	}
+	var arry1=new Array();
+	var arry2=new Array();
+	var arry3=new Array();
+	var arry4=new Array();
+	var arry5=new Array();
+	window.onload=function loads(){
+		arry1=showsArr1();
+		arry2=showsArr2();
+		arry3=showsArr3();
+		arry4=showsArr4();
+		arry5=showsArr5();
+	}
+	
+	$("[value='更新数据']").click(function(){
+		var operationTime=showsArr1();
+		var confirmTime=showsArr2();
+		var violatedNumber=showsArr3();
+		var proportion=showsArr4();
+		var toExamine=showsArr5();
+		
+		for(var j=0;j<operationTime.length;j++){
+			if(operationTime[j]!=arry1[j]||confirmTime[j]!=arry2[j]||violatedNumber[j]!=arry3[j]||proportion[j]!=arry4[j]||toExamine[j]!=arry5[j]){
+				var stid = $("[name=operationTime]").eq(j).parent().prev().prev().text();
+				var op = operationTime[j];
+				var co = confirmTime[j];
+				var vi = violatedNumber[j];
+				var pr = proportion[j];
+				var toe = $("input:radio:checked").eq(j).val();
+				
+				$.post("/gwx/c/service/updStSetting",{"operationTime":op,"confirmTime":co,"violatedNumber":vi,"proportion":pr,"toExamine":toe,"stid":stid},function(json){
+					if(json.code=="200"){
+						location.replace(location.href);
+					}else if(json.code=="500"){
+						alert(json.msg);
+					}
+					
+				},"json"); 
+			}
+		}
+	})
+</script>
+</html>
